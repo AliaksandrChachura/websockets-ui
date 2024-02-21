@@ -5,7 +5,7 @@ class inMemoryDB {
   private rooms: Room[] = [];
   private games: Game[] = [];
   private nextPlayerIndex = 1;
-  private nextRoomId = 1;
+  private nextRoomId = 0;
   private nextGameId = 1;
 
   registerPlayer(data: { name: string; password: string }): RegistrationResponse {
@@ -21,20 +21,24 @@ class inMemoryDB {
     }
 
     // Register new player
-    const newIndex = this.nextPlayerIndex++;
-    const newPlayer: Player = { name, password };
+    const index: number = this.nextPlayerIndex++;
+    const newPlayer: Player = { name, index };
     this.players.push(newPlayer);
 
-    return { name: newPlayer.name, error: false };
+    return { name: newPlayer.name, index: newPlayer.index, error: false, errorText: '' };
   }
 
-  createRoom(player: Player): Room {
-    const room: Room = { roomId: this.nextRoomId++, roomUsers: [player] };
+  createRoom(): Room {
+    let room: Room = {};
+    room = { roomId: this.nextRoomId++, roomUsers: [] };
     this.rooms.push(room);
     return room;
   }
 
-  updateRoom() {}
+  // updateRoom(player: Player) {
+  //   const 
+  //   return
+  // }
 
   addPlayerToRoom(player: Player, roomId: number): Room | string {
     const room = this.rooms.find((room) => room.roomId === roomId);
@@ -59,7 +63,20 @@ class inMemoryDB {
 
   getAllPlayers(): Player[] {
     return [...this.players];
-}
+  }
+
+  getAllRooms(): Room[] {
+    return [...this.rooms];
+  }
+
+  // findPlayerByWs(ws, players) {
+  //     for (const name in players) {
+  //       if (players.hasOwnProperty(name) && players[name].ws === ws) {
+  //           return players[name]; // Return the player's data if the WebSocket matches
+  //       }
+  //   }
+  //   return null;
+  // };
 
   // Add more methods as necessary for gameplay
 }

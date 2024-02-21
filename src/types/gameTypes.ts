@@ -1,6 +1,6 @@
 interface Player {
   name: string;
-  password: string;
+  password?: string;
   index?: number;
 };
 
@@ -12,8 +12,8 @@ interface RegistrationResponse {
 }
 
 interface Room {
-  roomId: number;
-  roomUsers: Player[];
+  roomId?: number;
+  roomUsers?: Player[];
 };
 
 interface Game {
