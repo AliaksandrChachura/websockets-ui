@@ -1,23 +1,23 @@
 interface Player {
   name: string;
   password?: string;
-  index?: number;
+  index?: string;
 };
 
 interface RegistrationResponse {
   name: string;
-  index?: number;
+  index?: string;
   error: boolean;
   errorText?: string;
 }
 
 interface Room {
-  roomId?: number;
+  roomId?: string;
   roomUsers?: Player[];
 };
 
 interface Game {
-  gameId: number;
+  gameId: string;
   players: Player[];
 };
 

@@ -1,17 +1,18 @@
 import { Player, RegistrationResponse, Room , Game } from "../types/gameTypes";
-
+import { generateRandomId } from "../utils/randomId";
 class inMemoryDB {
   private players: Player[] = [];
   private rooms: Room[] = [];
   private games: Game[] = [];
-  private nextPlayerIndex = 1;
-  private nextRoomId = 0;
-  private nextGameId = 1;
+  private currentPlayer: string;
+  idPlayer: string;
+
+  constructor() {
+    this.idPlayer = this.currentPlayer;
+  }
 
   registerPlayer(data: { name: string; password: string }): RegistrationResponse {
-    console.log(`Type of data: ${typeof data}`);
     const { name, password } = data;
-    console.log(`name, password: ${data} ${name} ${password}`);
     
 
     // Check if player already exists
@@ -21,7 +22,8 @@ class inMemoryDB {
     }
 
     // Register new player
-    const index: number = this.nextPlayerIndex++;
+    const index: string = generateRandomId();
+    this.setIdPlayer(index)
     const newPlayer: Player = { name, index };
     this.players.push(newPlayer);
 
@@ -30,17 +32,12 @@ class inMemoryDB {
 
   createRoom(): Room {
     let room: Room = {};
-    room = { roomId: this.nextRoomId++, roomUsers: [] };
+    room = { roomId: generateRandomId(), roomUsers: [] };
     this.rooms.push(room);
     return room;
   }
 
-  // updateRoom(player: Player) {
-  //   const 
-  //   return
-  // }
-
-  addPlayerToRoom(player: Player, roomId: number): Room | string {
+  addPlayerToRoom(player: Player, roomId: string): Room | string {
     const room = this.rooms.find((room) => room.roomId === roomId);
     if (!room) {
       return 'Room not found';
@@ -50,13 +47,13 @@ class inMemoryDB {
     return room;
   }
 
-  startGame(roomId: number): Game | string {
+  startGame(roomId: string): Game | string {
     const room = this.rooms.find((room) => room.roomId === roomId);
     if (!room || room.roomUsers.length < 2) {
       return 'Room not found or not enough players';
     }
 
-    const game: Game = { gameId: this.nextGameId++, players: room.roomUsers };
+    const game: Game = { gameId: generateRandomId(), players: room.roomUsers };
     this.games.push(game);
     return game;
   }
@@ -69,16 +66,18 @@ class inMemoryDB {
     return [...this.rooms];
   }
 
-  // findPlayerByWs(ws, players) {
-  //     for (const name in players) {
-  //       if (players.hasOwnProperty(name) && players[name].ws === ws) {
-  //           return players[name]; // Return the player's data if the WebSocket matches
-  //       }
-  //   }
-  //   return null;
-  // };
+  getAllGames(): Game[] {
+    return [...this.games];
+  }
 
-  // Add more methods as necessary for gameplay
+  public getIdPlayer(): string {
+    return this.idPlayer;
+  }
+
+  // Setter for idPlayer
+  public setIdPlayer(value: string): void {
+    this.idPlayer = value;
+  }
 }
 
 export { inMemoryDB };
